@@ -14,15 +14,36 @@ have a backend server from which it can make the call.
 
 This will test your lambda locally, it will not deploy to AWS.
 The command `sls` may be used inplace of writting `serverless`.
+
 ```
 $> sls invoke local -f createPost 
 ```
+
 With debugging
 ```
 $> SLS_DEBUG=* sls invoke local -f createPost
 ```
 
+Complete example (replace env vars with correct values)
+```
+$> medium_client_id=1 medium_client_secret=2 medium_access_token=3 sls invoke local -f createPost --data '{"title": "hello", "body": "world"}'
+```
+
+
 ## Deploying to AWS Lambda
 ```
 $> sls deploy
 ```
+
+## Environment variables
+
+Enviroment variables are defined on the lambda entry on AWS. When running locally you must specify them
+on the command line.
+
+The environment variables used by this lambda are from [Medium](https://medium.com/me/applications), found under `Jekyll React Integration Test`
+
+The following environment variables must be set when running this lambda locally too:
+1. medium_client_id
+1. medium_client_secret
+1. medium_client_access_token
+

@@ -5,15 +5,21 @@ var medium = require('medium-sdk');
 module.exports.createPost = (event, context, callback) => {
   console.log('Received event', JSON.stringify(event, null, 2));
 
+  // Check the parameters
   if (event.title === undefined || event.body === undefined) {
     callback("400 Invalid input");
   }
 
+  // Check the environment variables
+  if (process.env.medium_client_id === undefined || process.env.medium_client_secret === undefined || process.env.medium_access_token === undefined) {
+    callback("400 Enviroment variables not set");
+  }
+
   const client = new medium.MediumClient({
-    clientId: 'fcc314715293',
-    clientSecret: '0f224d1a367014a47c746f25b37accc57ce2b176'
+    clientId: process.env.medium_client_id,
+    clientSecret: process.env.medium_client_secret
   });
-  client.setAccessToken('2e375cf4351981f9f96da0e1d75e4452133a00b5934aba280b426930a61fe755e');
+  client.setAccessToken(process.env.medium_access_token);
 
   client.getUser((err, user) => {
     if (err) {
