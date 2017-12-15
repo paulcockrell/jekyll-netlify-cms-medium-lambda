@@ -1,0 +1,14 @@
+service: medium
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  profile: serverless
+
+functions:
+  createPost:
+    handler: handler.createPost
+    events:
+      - http:
+          method: post
+          path: createPost
