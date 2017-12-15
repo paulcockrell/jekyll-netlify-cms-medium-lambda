@@ -3,15 +3,15 @@
 var medium = require('medium-sdk');
 
 module.exports.createPost = (event, context, callback) => {
-  console.log('Received event', JSON.stringify(event, null, 2));
+  // console.log('Received event', JSON.stringify(event, null, 2));
 
-  // Check the parameters
-  if (event.title === undefined || event.body === undefined) {
+  const data = event.body && JSON.parse(event.body)
+  if (data === undefined || data.title === undefined || data.body === undefined) {
     callback("400 Invalid input");
   }
 
-  // Check the environment variables
-  if (process.env.medium_client_id === undefined || process.env.medium_client_secret === undefined || process.env.medium_access_token === undefined) {
+  const envVars = process.env;
+  if (envVars.medium_client_id === undefined || envVars.medium_client_secret === undefined || envVars.medium_access_token === undefined) {
     callback("400 Enviroment variables not set");
   }
 
@@ -28,9 +28,9 @@ module.exports.createPost = (event, context, callback) => {
     else {
       client.createPost({
         userId: user.id,
-        title: event.title,
+        title: data.title,
         contentFormat: medium.PostContentFormat.HTML,
-        content: event.body,
+        content: data.body,
         publishStatus: medium.PostPublishStatus.DRAFT
       }, (err, post) => {
         if (err) {

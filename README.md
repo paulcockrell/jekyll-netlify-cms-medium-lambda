@@ -26,7 +26,7 @@ $> SLS_DEBUG=* sls invoke local -f createPost
 
 Complete example (replace env vars with correct values)
 ```
-$> medium_client_id=1 medium_client_secret=2 medium_access_token=3 sls invoke local -f createPost --data '{"title": "hello", "body": "world"}'
+$> medium_client_id=1 medium_client_secret=2 medium_access_token=3 sls invoke local -f createPost --data '{"body": {"title": "hello", "body": "world"}}'
 ```
 
 
