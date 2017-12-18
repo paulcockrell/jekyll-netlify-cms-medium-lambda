@@ -3,9 +3,11 @@
 var medium = require('medium-sdk');
 
 module.exports.createPost = (event, context, callback) => {
-  // console.log('Received event', JSON.stringify(event, null, 2));
+  console.log('Received event', JSON.stringify(event, null, 2));
 
-  const data = event.body && JSON.parse(event.body)
+  const data = event.body;
+  console.log("XXX", data);
+
   if (data === undefined || data.title === undefined || data.body === undefined) {
     callback("400 Invalid input");
   }
