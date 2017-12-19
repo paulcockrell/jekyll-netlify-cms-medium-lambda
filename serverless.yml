@@ -10,5 +10,5 @@ functions:
     handler: handler.createPost
     events:
       - http:
-          method: post
           path: createPost
+          method: post
