@@ -5,16 +5,39 @@ var medium = require('medium-sdk');
 module.exports.createPost = (event, context, callback) => {
   console.log('Received event', JSON.stringify(event, null, 2));
 
-  const data = event.body;
-  console.log("XXX", data);
+  let data;
+  if (typeof event.body === 'string') {
+    data = JSON.parse(event.body);
+  }
+  else {
+    data = event.body
+  }
 
   if (data === undefined || data.title === undefined || data.body === undefined) {
-    callback("400 Invalid input");
+    const response = {
+      statusCode: 400,
+      headers: {
+          'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify({
+      message: 'Bad or missing parameters provided',
+      }),
+    };
+    return callback(null, response);
   }
 
   const envVars = process.env;
   if (envVars.medium_client_id === undefined || envVars.medium_client_secret === undefined || envVars.medium_access_token === undefined) {
-    callback("400 Enviroment variables not set");
+    const response = {
+      statusCode: 400,
+      headers: {
+        'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify({
+        message: 'Enivronment variables not set, contact support',
+      }),
+    };
+    return callback(null, response);
   }
 
   const client = new medium.MediumClient({
@@ -25,7 +48,16 @@ module.exports.createPost = (event, context, callback) => {
 
   client.getUser((err, user) => {
     if (err) {
-      console.log("Failed to get medium user", err);
+      const response = {
+        statusCode: 500,
+        headers: {
+          'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({
+          message: "Failed to get medium user"
+        })
+      };
+      return callback(null, response);
     }
     else {
       client.createPost({
@@ -36,18 +68,29 @@ module.exports.createPost = (event, context, callback) => {
         publishStatus: medium.PostPublishStatus.DRAFT
       }, (err, post) => {
         if (err) {
-          console.log("Failed to create post for user" + user.name, err);
+          const response = {
+            statusCode: 400,
+            headers: {
+              'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'
+            },
+            body: JSON.stringify({
+              message: "Failed to create post"
+            })
+          };
+          return callback(null, response);
         }
         else {
           const response = {
             statusCode: 200,
+            headers: {
+              'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'
+            },
             body: JSON.stringify({
               message: "Created post",
               post: post
-            }),
+            })
           };
-
-          callback(null, response);
+          return callback(null, response);
         }
       });
     }
